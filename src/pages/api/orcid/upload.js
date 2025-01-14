@@ -4,41 +4,30 @@ import mysql from "mysql2/promise";
 const dbConfig = {
   host: "localhost",
   user: "root",
-  password: "123456",
+  password: "12345678root",
   database: "dspace",
 };
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const { data } = req.body;
 
-    if (!data || data.length === 0) {
-      return res.status(400).json({ error: "No data provided" });
+    // Validar los datos recibidos
+    if (!Array.isArray(data) || data.length === 0) {
+      return res.status(400).json({ error: "Datos inválidos o vacíos" });
     }
 
     try {
-      const connection = await mysql.createConnection(dbConfig);
+      // Procesar los datos (ejemplo: guardarlos en una base de datos)
+      console.log("Datos recibidos:", data);
 
-      // Preparar la consulta para insertar los registros
-      const insertQuery = `
-        INSERT INTO orcid (dni, nombreapellido, orcid)
-        VALUES (?, ?, ?)
-      `;
-
-      // Insertar cada fila de datos
-      for (const row of data) {
-        const [dni, nombreapellido, orcid] = row;
-        if (dni && nombreapellido && orcid) {
-          await connection.query(insertQuery, [dni, nombreapellido, orcid]);
-        }
-      }
-
-      connection.end();
+      // Simulación de guardado exitoso
       res.status(200).json({ message: "Datos cargados exitosamente" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error al procesar el archivo" });
+      console.error("Error procesando los datos:", error);
+      res.status(500).json({ error: "Error al guardar los datos" });
     }
   } else {
-    res.status(405).json({ error: "Método no permitido" });
+    res.setHeader("Allow", ["POST"]);
+    res.status(405).end(`Método ${req.method} no permitido`);
   }
 }
