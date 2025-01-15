@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import OrcidTable from "../components/OrcidTable"; // Asegúrate de tener este componente
-
+import OcdeTable from '../components/OcdeTable';
 const Dashboard = () => {
   const router = useRouter();
 
@@ -16,7 +16,9 @@ const Dashboard = () => {
       case "/investigaciones":
         return <InvestigacionesTable/>; // Aquí puedes incluir el componente para esa ruta
       case "/orcid":
-        return <OrcidTable />; // Aquí puedes incluir el componente ORCID
+        return <OrcidTable />;
+        case "/Ocde":
+        return <OcdeTable />; // Aquí puedes incluir el componente ORCID
       default:
         return <div>Bienvenido al Dashboard</div>; // Contenido predeterminado
     }
@@ -51,6 +53,11 @@ const Dashboard = () => {
             <li>
               <Link href="/orcid" style={{ color: "white", textDecoration: "none" }}>
                 Lista de ORCID
+              </Link>
+            </li>
+            <li>
+              <Link href="/ocde" style={{ color: "white", textDecoration: "none" }}>
+                Lista de OCDE
               </Link>
             </li>
           </ul>

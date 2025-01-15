@@ -23,10 +23,10 @@ export default async function handler(req, res) {
       const connection = await mysql.createConnection(dbConfig);
 
       // Preparar las consultas para la inserción masiva
-      const queries = data.map(({ dni, nombreapellido, orcid }) => {
+      const queries = data.map(({ facultad, ocde, codigoprograma }) => {
         return connection.query(
-          "INSERT INTO orcid (dni, nombreapellido, orcid) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE nombreapellido = VALUES(nombreapellido), orcid = VALUES(orcid)",
-          [dni, nombreapellido, orcid]
+          "INSERT INTO ocde (facultad, ocde, codigoprograma) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE ocde = VALUES(ocde), codigoprograma = VALUES(codigoprograma)",
+          [facultad, ocde, codigoprograma]
         );
       });
 
