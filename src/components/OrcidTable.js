@@ -135,7 +135,7 @@ export default function OrcidTable() {
             placeholder="DNI"
             value={formData.dni}
             onChange={(e) => setFormData({ ...formData, dni: e.target.value })}
-            disabled={isEditing}
+            
             required
           />
           <input

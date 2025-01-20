@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import OrcidTable from "../components/OrcidTable"; // Asegúrate de tener este componente
 import OcdeTable from '../components/OcdeTable';
+import ExcelUpload from './ExcelUpload';
 const Dashboard = () => {
   const router = useRouter();
 
@@ -18,7 +19,9 @@ const Dashboard = () => {
       case "/orcid":
         return <OrcidTable />;
         case "/Ocde":
-        return <OcdeTable />; // Aquí puedes incluir el componente ORCID
+        return <OcdeTable />;
+        case "/cargar-excel":
+        return <ExcelUpload />; // Aquí puedes incluir el componente ORCID
       default:
         return <div>Bienvenido al Dashboard</div>; // Contenido predeterminado
     }
@@ -58,6 +61,11 @@ const Dashboard = () => {
             <li>
               <Link href="/ocde" style={{ color: "white", textDecoration: "none" }}>
                 Lista de OCDE
+              </Link>
+            </li>
+            <li>
+              <Link href="/cargar-excel" style={{ color: "white", textDecoration: "none" }}>
+                Carga de Modelo Excel
               </Link>
             </li>
           </ul>

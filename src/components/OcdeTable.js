@@ -132,9 +132,9 @@ export default function OcdeTable() {
           <input
             type="text"
             placeholder="FACULTAD"
-            value={formData.dni}
+            value={formData.facultad}
             onChange={(e) => setFormData({ ...formData, facultad: e.target.value })}
-            disabled={isEditing}
+            
             required
           />
           <input

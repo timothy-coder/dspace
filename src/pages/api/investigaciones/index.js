@@ -26,7 +26,9 @@ export default async function handler(req, res) {
           codigo, 
           titulo, 
           autor, 
-          dni_autor, 
+          dni_autor,
+          autor2, 
+          dni_autor2,
           asesor, 
           dni_asesor, 
           orcid, 
@@ -51,26 +53,27 @@ export default async function handler(req, res) {
           porcentaje_reporte_tesis_si_no, 
           observaciones, 
           url, 
-          numero_oficio, 
+          numero_oficio,
+          palabrasclave, 
           estado 
         } = req.body;
 
         await connection.query(
           `INSERT INTO investigaciones (
-            codigo, titulo, autor, dni_autor, asesor, dni_asesor, orcid, fecha, titulo_grado, 
+            codigo, titulo, autor, dni_autor,autor2, dni_autor2, asesor, dni_asesor, orcid, fecha, titulo_grado, 
             denominacion, facultad, ocde, tipo, codigo_programa, porcentaje_similitud_oti, 
             porcentaje_similitud_asesor, jurado_1, jurado_2, jurado_3, autoridad_firmante, 
             numero_oficio_referencia, autorizacion, denominacion_si_no, titulo_si_no, 
             tipo_tesis_si_no, porcentaje_reporte_tesis_si_no, observaciones, url, 
-            numero_oficio, estado
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            numero_oficio,palabrasclave, estado
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?, ?, ?, ?, ?, ?, ?, ?)`,
           [
-            codigo, titulo, autor, dni_autor, asesor, dni_asesor, orcid, fecha, titulo_grado, 
+            codigo, titulo, autor, dni_autor,autor2, dni_autor2, asesor, dni_asesor, orcid, fecha, titulo_grado, 
             denominacion, facultad, ocde, tipo, codigo_programa, porcentaje_similitud_oti, 
             porcentaje_similitud_asesor, jurado_1, jurado_2, jurado_3, autoridad_firmante, 
             numero_oficio_referencia, autorizacion, denominacion_si_no, titulo_si_no, 
             tipo_tesis_si_no, porcentaje_reporte_tesis_si_no, observaciones, url, 
-            numero_oficio, estado
+            numero_oficio,palabrasclave, estado
           ]
         );
         res.status(201).json({ message: "Registro agregado exitosamente" });

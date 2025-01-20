@@ -1,6 +1,7 @@
-
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx"; // Librería para leer Excel
+import { Document, Packer, Paragraph, Table, TableCell, TableRow, TextRun } from "docx";
+import { saveAs } from "file-saver"; // Librería para descargar archivos
 
 export default function InvestigacionesTable() {
   const initialFormState = {
@@ -8,6 +9,8 @@ export default function InvestigacionesTable() {
     titulo: "",
     autor: "",
     dni_autor: "",
+    autor2: "",
+    dni_autor2: "",
     asesor: "",
     dni_asesor: "",
     orcid: "",
@@ -33,6 +36,7 @@ export default function InvestigacionesTable() {
     observaciones: "",
     url: "",
     numero_oficio: "",
+    palabrasclave: "",
     estado: "",
   };
 
@@ -57,6 +61,7 @@ export default function InvestigacionesTable() {
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
+
     if (!file) {
       alert("Por favor, selecciona un archivo");
       return;
@@ -68,11 +73,8 @@ export default function InvestigacionesTable() {
         const binaryString = e.target.result;
         const workbook = XLSX.read(binaryString, { type: "binary" });
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: Object.keys(initialFormState),
-          range: 1,
-        });
 
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, range: 1 });
         console.log("Datos extraídos del Excel:", jsonData);
 
         if (jsonData.length === 0) {
@@ -80,20 +82,23 @@ export default function InvestigacionesTable() {
           return;
         }
 
+        const processedData = jsonData.map((row) => ({
+          // Procesar los datos de acuerdo con la estructura de tu archivo
+        }));
+
         const res = await fetch("/api/investigaciones/upload", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data: jsonData }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: processedData }),
         });
 
+        const responseText = await res.text();
         if (!res.ok) {
-          throw new Error("Error al cargar los datos en el backend");
+          console.error("Error en la respuesta del servidor:", responseText);
+          alert(`Error al cargar los datos en el backend: ${responseText}`);
+        } else {
+          alert("Carga exitosa!");
         }
-
-        fetchData();
-        alert("Carga exitosa!");
       } catch (error) {
         console.error("Error al procesar el archivo Excel:", error);
         alert("Error al cargar los datos");
@@ -148,6 +153,38 @@ export default function InvestigacionesTable() {
     }
   };
 
+  const handlePrint = (item) => {
+    // Crear documento Word con la información del elemento
+    const doc = new Document({
+      sections: [
+        {
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: "Información de la Investigación",
+                  bold: true,
+                  size: 28,
+                }),
+              ],
+              spacing: { after: 400 },
+            }),
+            new Paragraph(`Título: ${item.titulo}`),
+            new Paragraph(`Autor: ${item.autor} (DNI: ${item.dni_autor})`),
+            new Paragraph(`Asesor: ${item.asesor} (DNI: ${item.dni_asesor})`),
+            new Paragraph(`Facultad: ${item.facultad}`),
+            new Paragraph(`Fecha: ${item.fecha}`),
+          ],
+        },
+      ],
+    });
+
+    // Generar archivo y descargar
+    Packer.toBlob(doc).then((blob) => {
+      saveAs(blob, `OFICIO N°${item.numero_oficio}.docx`);
+    });
+  };
+
   const renderInput = (key) => {
     const dropdownOptions = {
       tipo: ["Tesis", "Proyecto de investigación", "Trabajo de suficiencia profesional"],
@@ -156,7 +193,7 @@ export default function InvestigacionesTable() {
       titulo_si_no: ["Si", "No"],
       tipo_tesis_si_no: ["Si", "No"],
       porcentaje_reporte_tesis_si_no: ["Si", "No"],
-      estado: ["Observado", "Por enviar", "Enviado"],
+      estado: ["Por enviar", "Observado", "Enviado"],
     };
 
     if (dropdownOptions[key]) {
@@ -188,13 +225,14 @@ export default function InvestigacionesTable() {
   };
 
   return (
-    
-    <div style={{
+    <div
+      style={{
         flex: 1,
         padding: "0px",
         backgroundColor: "#ecf0f1",
-        marginLeft: "300px", // Desplaza el contenido principal para que no se superponga con la barra lateral
-      }}>
+        marginLeft: "300px",
+      }}
+    >
       <h1>Gestión de Investigaciones</h1>
 
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
@@ -229,6 +267,7 @@ export default function InvestigacionesTable() {
                 <td>
                   <button onClick={() => handleEdit(item)}>Editar</button>
                   <button onClick={() => handleDelete(item.codigo)}>Eliminar</button>
+                  <button onClick={() => handlePrint(item)}>Imprimir</button>
                 </td>
               </tr>
             ))}

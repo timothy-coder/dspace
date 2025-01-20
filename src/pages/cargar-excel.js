@@ -1,6 +1,7 @@
 import { useState } from "react";
-import Navbar from "../components/OrcidTable";
 
+import ExcelUpload from "../components/ExcelUpload";
+import Dashboard from "@/components/Dashboard";
 
 export default function CargarExcel() {
   const [uploadedFile, setUploadedFile] = useState(null); // Archivo cargado
@@ -14,8 +15,12 @@ export default function CargarExcel() {
 
   return (
     <>
-      <Navbar />
-      <div className="p-8">
+    <Dashboard/>
+      <div className="p-8 " style={{
+      flex: 1,
+      padding: "0px",
+      backgroundColor: "#ecf0f1",
+      marginLeft: "300px",}}>
         <h2 className="text-2xl font-bold mb-4">Cargar Archivo Excel</h2>
         <input
           type="file"
