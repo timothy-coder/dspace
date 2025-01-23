@@ -213,6 +213,17 @@ export default function InvestigacionesTable() {
       );
     }
 
+    if (key === "fecha") {
+      return (
+        <input
+          key={key}
+          type="date" // Tipo de entrada para el calendario
+          value={formData[key]}
+          onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+        />
+      );
+    }
+
     return (
       <input
         key={key}
@@ -228,9 +239,10 @@ export default function InvestigacionesTable() {
     <div
       style={{
         flex: 1,
-        padding: "0px",
+        marginTop: "-48px",
+        overflowY: "auto",
         backgroundColor: "#ecf0f1",
-        marginLeft: "300px",
+        marginLeft: "280px",
       }}
     >
       <h1>Gestión de Investigaciones</h1>

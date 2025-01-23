@@ -1,3 +1,4 @@
+/*
 // pages/api/insertTesis.js
 import pool from "../../lib/db";
 
@@ -105,7 +106,9 @@ export default async function handler(req, res) {
     res.status(405).json({ message: "Método no permitido" });
   }
 }
-/*// pages/api/insertTesis.js
+*/
+
+//con tabla  pages/api/insertTesis.js
 import pool from "../../lib/db";
 
 export default async function handler(req, res) {
@@ -228,4 +231,4 @@ export default async function handler(req, res) {
     res.status(405).json({ message: "Método no permitido" });
   }
 }
- */
+ 

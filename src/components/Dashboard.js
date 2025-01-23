@@ -1,10 +1,10 @@
-// components/Dashboard.js
-
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import OrcidTable from "../components/OrcidTable"; // Asegúrate de tener este componente
+import OrcidTable from "../components/OrcidTable";
 import OcdeTable from '../components/OcdeTable';
 import ExcelUpload from './ExcelUpload';
+import InvestigacionesTable from './InvestigacionesTable';
+
 const Dashboard = () => {
   const router = useRouter();
 
@@ -14,67 +14,67 @@ const Dashboard = () => {
   // Mostrar contenido según la ruta activa
   const renderContent = () => {
     switch (pathname) {
+      case "/":
+        return <div>Bienvenido al Dashboard</div>; // Contenido para la página de inicio
       case "/investigaciones":
-        return <InvestigacionesTable/>; // Aquí puedes incluir el componente para esa ruta
+        return <InvestigacionesTable />; // Solo se muestra el componente InvestigacionesTable en esta ruta
       case "/orcid":
         return <OrcidTable />;
-        case "/Ocde":
+      case "/ocde":
         return <OcdeTable />;
-        case "/cargar-excel":
-        return <ExcelUpload />; // Aquí puedes incluir el componente ORCID
+      case "/cargar-excel":
+        return <ExcelUpload />;
       default:
-        return <div>Bienvenido al Dashboard</div>; // Contenido predeterminado
+        return <div>Página no encontrada</div>; // Contenido para rutas desconocidas
     }
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      {/* Barra lateral */}
-      <aside
+      <div
         style={{
           width: "250px",
           backgroundColor: "#2c3e50",
           color: "white",
-          padding: "20px",
-          position: "fixed", // Fija la barra lateral
-          height: "100vh", // Asegura que la barra lateral ocupe toda la altura de la ventana
+          padding: "10px",
+          position: "fixed",
+          height: "100vh",
+          overflowY: "auto",
         }}
       >
         <h2>Dashboard</h2>
         <nav>
           <ul style={{ listStyle: "none", padding: 0 }}>
-            <li>
+            <li >
               <Link href="/" style={{ color: "white", textDecoration: "none" }}>
                 Inicio
               </Link>
             </li>
-            <li>
+            <li >
               <Link href="/investigaciones" style={{ color: "white", textDecoration: "none" }}>
                 Lista de Títulos
               </Link>
             </li>
-            <li>
+            <li >
               <Link href="/orcid" style={{ color: "white", textDecoration: "none" }}>
                 Lista de ORCID
               </Link>
             </li>
-            <li>
+            <li >
               <Link href="/ocde" style={{ color: "white", textDecoration: "none" }}>
                 Lista de OCDE
               </Link>
             </li>
-            <li>
+            <li style={{ marginBottom: "20px" }}>
               <Link href="/cargar-excel" style={{ color: "white", textDecoration: "none" }}>
                 Carga de Modelo Excel
               </Link>
             </li>
           </ul>
         </nav>
-      </aside>
+      </div>
 
-      {/* Contenido principal */}
       
-    </div>
+    
   );
 };
 
