@@ -119,9 +119,12 @@ export default function OrcidTable() {
   return (
     <div style={{
       flex: 1,
-      padding: "0px",
+      marginTop: "-60px",
+      overflowY: "auto",
       backgroundColor: "#ecf0f1",
-      marginLeft: "300px",}}  >
+      marginLeft: "260px",
+      height: "100%",
+    }} >
       <h1>ORCID Management</h1>
       
       {/* Botón para cargar el archivo Excel */}

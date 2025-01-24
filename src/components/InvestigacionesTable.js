@@ -4,6 +4,42 @@ import { Document, Packer, Paragraph, Table, TableCell, TableRow, TextRun } from
 import { saveAs } from "file-saver"; // Librería para descargar archivos
 
 export default function InvestigacionesTable() {
+  const headers = {
+    codigo: "Código",
+    titulo: "Título",
+    autor: "Autor",
+    dni_autor: "DNI del Autor",
+    autor2: "Coautor",
+    dni_autor2: "DNI del Coautor",
+    asesor: "Asesor",
+    dni_asesor: "DNI del Asesor",
+    orcid: "ORCID",
+    fecha: "Fecha",
+    titulo_grado: "Título de Grado",
+    denominacion: "Denominación",
+    facultad: "Facultad",
+    ocde: "OCDE",
+    tipo: "Tipo de Investigación",
+    codigo_programa: "Código del Programa",
+    porcentaje_similitud_oti: "Similitud OTI (%)",
+    porcentaje_similitud_asesor: "Similitud Asesor (%)",
+    jurado_1: "Jurado 1",
+    jurado_2: "Jurado 2",
+    jurado_3: "Jurado 3",
+    autoridad_firmante: "Autoridad Firmante",
+    numero_oficio_referencia: "N° de Oficio de Referencia",
+    autorizacion: "Autorización",
+    denominacion_si_no: "Denominación (Sí/No)",
+    titulo_si_no: "Título (Sí/No)",
+    tipo_tesis_si_no: "Tipo de Tesis (Sí/No)",
+    porcentaje_reporte_tesis_si_no: "Reporte Tesis (Sí/No)",
+    observaciones: "Observaciones",
+    url: "URL",
+    numero_oficio: "N° de Oficio",
+    palabrasclave: "Palabras Clave",
+    estado: "Estado",
+  };
+  
   const initialFormState = {
     codigo: "",
     titulo: "",
@@ -239,10 +275,11 @@ export default function InvestigacionesTable() {
     <div
       style={{
         flex: 1,
-        marginTop: "-48px",
+        marginTop: "-60px",
         overflowY: "auto",
         backgroundColor: "#ecf0f1",
-        marginLeft: "280px",
+        marginLeft: "260px",
+        height: "100%",
       }}
     >
       <h1>Gestión de Investigaciones</h1>

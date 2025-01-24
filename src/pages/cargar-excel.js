@@ -14,13 +14,19 @@ export default function CargarExcel() {
   };
 
   return (
-    <>
-    <Dashboard/>
-      <div className="p-8 " style={{
+    <div style={{
       flex: 1,
-      padding: "0px",
+      overflowY: "auto",
       backgroundColor: "#ecf0f1",
-      marginLeft: "300px",}}>
+      height: "100%",
+    }}>
+    <Dashboard/>
+      <div style={{
+      flex: 1,
+      overflowY: "auto",
+      backgroundColor: "#ecf0f1",
+      marginLeft: "270px",
+      height: "100%",}}>
         <h2 className="text-2xl font-bold mb-4">Cargar Archivo Excel</h2>
         <input
           type="file"
@@ -30,6 +36,6 @@ export default function CargarExcel() {
         />
         {uploadedFile && <ExcelUpload file={uploadedFile} />}
       </div>
-    </>
+    </div>
   );
 }

@@ -17,7 +17,7 @@ const Dashboard = () => {
       case "/":
         return <div>Bienvenido al Dashboard</div>; // Contenido para la página de inicio
       case "/investigaciones":
-        return <InvestigacionesTable />; // Solo se muestra el componente InvestigacionesTable en esta ruta
+        return <InvestigacionesTable/>; // Solo se muestra el componente InvestigacionesTable en esta ruta
       case "/orcid":
         return <OrcidTable />;
       case "/ocde":
@@ -33,11 +33,13 @@ const Dashboard = () => {
       <div
         style={{
           width: "250px",
+          marginTop: "-20px",
+          marginLeft: "-8px",
           backgroundColor: "#2c3e50",
           color: "white",
-          padding: "10px",
+          paddingLeft: "10px",
           position: "fixed",
-          height: "100vh",
+          height: "100%",
           overflowY: "auto",
         }}
       >
