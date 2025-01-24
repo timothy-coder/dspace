@@ -4,7 +4,7 @@ import OrcidTable from "../components/OrcidTable";
 import OcdeTable from '../components/OcdeTable';
 import ExcelUpload from './ExcelUpload';
 import InvestigacionesTable from './InvestigacionesTable';
-
+import PdfUpload from './CargarPdf';
 const Dashboard = () => {
   const router = useRouter();
 
@@ -24,6 +24,8 @@ const Dashboard = () => {
         return <OcdeTable />;
       case "/cargar-excel":
         return <ExcelUpload />;
+        case "/cargarpdf":
+        return <PdfUpload />;
       default:
         return <div>Página no encontrada</div>; // Contenido para rutas desconocidas
     }
@@ -46,22 +48,22 @@ const Dashboard = () => {
         <h2>Dashboard</h2>
         <nav>
           <ul style={{ listStyle: "none", padding: 0 }}>
-            <li >
+            <li style={{ marginBottom: "20px" }}>
               <Link href="/" style={{ color: "white", textDecoration: "none" }}>
                 Inicio
               </Link>
             </li>
-            <li >
+            <li style={{ marginBottom: "20px" }}>
               <Link href="/investigaciones" style={{ color: "white", textDecoration: "none" }}>
                 Lista de Títulos
               </Link>
             </li>
-            <li >
+            <li style={{ marginBottom: "20px" }}>
               <Link href="/orcid" style={{ color: "white", textDecoration: "none" }}>
                 Lista de ORCID
               </Link>
             </li>
-            <li >
+            <li style={{ marginBottom: "20px" }}>
               <Link href="/ocde" style={{ color: "white", textDecoration: "none" }}>
                 Lista de OCDE
               </Link>
@@ -69,6 +71,11 @@ const Dashboard = () => {
             <li style={{ marginBottom: "20px" }}>
               <Link href="/cargar-excel" style={{ color: "white", textDecoration: "none" }}>
                 Carga de Modelo Excel
+              </Link>
+            </li>
+            <li style={{ marginBottom: "20px" }}>
+              <Link href="/cargarpdf" style={{ color: "white", textDecoration: "none" }}>
+                Carga de Modelo PDF
               </Link>
             </li>
           </ul>

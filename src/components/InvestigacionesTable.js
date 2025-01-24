@@ -1,7 +1,24 @@
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx"; // Librería para leer Excel
-import { Document, Packer, Paragraph, Table, TableCell, TableRow, TextRun } from "docx";
-import { saveAs } from "file-saver"; // Librería para descargar archivos
+
+/*import {
+  AlignmentType,
+  Document,
+  Packer,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+  TextRun,
+  WidthType,
+  ImageRun,
+} from "docx";
+import { saveAs } from "file-saver";*/
+import PizZip from "pizzip";
+import Docxtemplater from "docxtemplater";
+import { saveAs } from "file-saver";
+import JSZipUtils from "jszip-utils";
+
 
 export default function InvestigacionesTable() {
   const headers = {
@@ -21,18 +38,18 @@ export default function InvestigacionesTable() {
     ocde: "OCDE",
     tipo: "Tipo de Investigación",
     codigo_programa: "Código del Programa",
-    porcentaje_similitud_oti: "Similitud OTI (%)",
-    porcentaje_similitud_asesor: "Similitud Asesor (%)",
+    porcentaje_similitud_oti: "Similitud OTI",
+    porcentaje_similitud_asesor: "Similitud Asesor",
     jurado_1: "Jurado 1",
     jurado_2: "Jurado 2",
     jurado_3: "Jurado 3",
     autoridad_firmante: "Autoridad Firmante",
     numero_oficio_referencia: "N° de Oficio de Referencia",
     autorizacion: "Autorización",
-    denominacion_si_no: "Denominación (Sí/No)",
-    titulo_si_no: "Título (Sí/No)",
-    tipo_tesis_si_no: "Tipo de Tesis (Sí/No)",
-    porcentaje_reporte_tesis_si_no: "Reporte Tesis (Sí/No)",
+    denominacion_si_no: "Denominación",
+    titulo_si_no: "Título",
+    tipo_tesis_si_no: "Tipo de Tesis",
+    porcentaje_reporte_tesis_si_no: "Reporte Tesis",
     observaciones: "Observaciones",
     url: "URL",
     numero_oficio: "N° de Oficio",
@@ -188,38 +205,255 @@ export default function InvestigacionesTable() {
       console.error("Error deleting record:", error);
     }
   };
-
-  const handlePrint = (item) => {
-    // Crear documento Word con la información del elemento
+  
+  
+  /*const handlePrint = async (item) => {
+    // Cargar las imágenes como blobs
+    const escudoBlob = await fetch("URL_DE_LA_IMAGEN_ESCUDO").then((res) =>
+      res.blob()
+    );
+    const firmaBlob = await fetch("URL_DE_LA_IMAGEN_FIRMA").then((res) =>
+      res.blob()
+    );
+  
+    // Crear el documento Word con imágenes y diseño
     const doc = new Document({
       sections: [
         {
           children: [
+            // Encabezado con imagen y texto
             new Paragraph({
               children: [
+                new ImageRun({
+                  data: escudoBlob,
+                  transformation: { width: 100, height: 100 },
+                }),
                 new TextRun({
-                  text: "Información de la Investigación",
+                  text: "UNIVERSIDAD NACIONAL DEL CENTRO DEL PERÚ",
                   bold: true,
                   size: 28,
+                  allCaps: true,
+                }),
+                new TextRun({
+                  text: "OFICINA DE TECNOLOGÍAS DE LA INFORMACIÓN",
+                  bold: true,
+                  size: 28,
+                  allCaps: true,
                 }),
               ],
-              spacing: { after: 400 },
+              alignment: AlignmentType.CENTER,
             }),
-            new Paragraph(`Título: ${item.titulo}`),
-            new Paragraph(`Autor: ${item.autor} (DNI: ${item.dni_autor})`),
-            new Paragraph(`Asesor: ${item.asesor} (DNI: ${item.dni_asesor})`),
-            new Paragraph(`Facultad: ${item.facultad}`),
-            new Paragraph(`Fecha: ${item.fecha}`),
+            new Paragraph({
+              text: "Año de la recuperación y consolidación de la economía peruana",
+              alignment: AlignmentType.CENTER,
+              italics: true,
+            }),
+  
+            // Fecha
+            new Paragraph({
+              text: `Huancayo, ${item.fecha}`,
+              alignment: AlignmentType.RIGHT,
+            }),
+  
+            // Título del oficio
+            new Paragraph({
+              text: `OFICIO N° ${item.numero_oficio}`,
+              bold: true,
+              size: 24,
+              alignment: AlignmentType.CENTER,
+            }),
+  
+            // Destinatario
+            new Paragraph({
+              text: `Ph. D. Dr.\n${item.decano}\nDECANO DE LA FACULTAD DE INGENIERÍA CIVIL\nPRESENTE.`,
+            }),
+  
+            // Asunto
+            new Paragraph({
+              text: "\nASUNTO: REMITO URL GENERADO EN EL REPOSITORIO INSTITUCIONAL PARA TRÁMITE DE LA OBTENCIÓN DEL DIPLOMA",
+              bold: true,
+            }),
+            new Paragraph(`REFERENCIA: OFICIO N° ${item.oficio_referencia}`),
+  
+            // Cuerpo del oficio
+            new Paragraph({
+              text: `Es grato dirigirme a usted para saludarlo cordialmente y a la vez informarle que se ha generado la URL de acuerdo a lo solicitado con el documento de referencia para proceder con el trámite correspondiente de la obtención del diploma, según el siguiente detalle:`,
+            }),
+  
+            // Tabla de contenido
+            new Table({
+              rows: [
+                // Fila de encabezados
+                new TableRow({
+                  children: [
+                    new TableCell({
+                      children: [new Paragraph("N°")],
+                      width: { size: 5, type: WidthType.PERCENTAGE },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph("CÓDIGO")],
+                      width: { size: 15, type: WidthType.PERCENTAGE },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph("TÍTULO DE LA TESIS")],
+                      width: { size: 30, type: WidthType.PERCENTAGE },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph("AUTOR")],
+                      width: { size: 20, type: WidthType.PERCENTAGE },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph("SIMILITUD")],
+                      width: { size: 10, type: WidthType.PERCENTAGE },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph("TÍTULO/GRADO")],
+                      width: { size: 10, type: WidthType.PERCENTAGE },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph("FACULTAD")],
+                      width: { size: 15, type: WidthType.PERCENTAGE },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph("URL")],
+                      width: { size: 20, type: WidthType.PERCENTAGE },
+                    }),
+                  ],
+                }),
+                // Fila de datos
+                new TableRow({
+                  children: [
+                    new TableCell({
+                      children: [new Paragraph("1")],
+                    }),
+                    new TableCell({
+                      children: [new Paragraph(item.codigo)],
+                    }),
+                    new TableCell({
+                      children: [new Paragraph(item.titulo)],
+                    }),
+                    new TableCell({
+                      children: [
+                        new Paragraph(`${item.autor} (DNI: ${item.dni_autor})`),
+                      ],
+                    }),
+                    new TableCell({
+                      children: [new Paragraph(`${item.similitud}%`)],
+                    }),
+                    new TableCell({
+                      children: [new Paragraph(item.titulo_grado)],
+                    }),
+                    new TableCell({
+                      children: [new Paragraph(item.facultad)],
+                    }),
+                    new TableCell({
+                      children: [new Paragraph(item.url)],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+  
+            // Pie del oficio
+            new Paragraph({
+              text: `\nSin otro en particular, se aprovecha la ocasión para expresarle las muestras de mi distinguida consideración y agradecimiento por la atención prestada.\n\nAtentamente,`,
+            }),
+            // Firma con imagen
+            new Paragraph({
+              children: [
+                new ImageRun({
+                  data: firmaBlob,
+                  transformation: { width: 200, height: 50 },
+                }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              text: `${item.autoridad_firmante}\n${item.cargo_autoridad}`,
+              alignment: AlignmentType.CENTER,
+            }),
           ],
         },
       ],
     });
-
+  
     // Generar archivo y descargar
     Packer.toBlob(doc).then((blob) => {
-      saveAs(blob, `OFICIO N°${item.numero_oficio}.docx`);
+      saveAs(blob, `OFICIO N° ${item.numero_oficio}-2025-JEF-OTI-RI-UNCP.docx`);
     });
+  };*/
+  const JSZip = require("jszip");
+  const PizZip = require("pizzip");
+  const Docxtemplater = require("docxtemplater");
+  
+  const handlePrint = (item) => {
+    // Verifica si falta el campo 'oficio_referencia'
+    if (!item.oficio_referencia) {
+      console.warn('Falta el campo "oficio_referencia" en el objeto "item"');
+    }
+  
+    // Usar fetch para obtener el archivo binario
+    fetch("/images/modelo.docx")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al cargar el archivo");
+        }
+        return response.arrayBuffer();
+      })
+      .then((content) => {
+        // Crear un PizZip a partir del contenido del archivo
+        const zip = new PizZip(content);
+  
+        // Crear una instancia de Docxtemplater con el archivo cargado
+        const doc = new Docxtemplater(zip, {
+          paragraphLoop: true,
+          linebreaks: true,
+        });
+  
+        // Pasar los datos dinámicos al documento
+        doc.setData({
+          fecha: item.fecha,
+          numero_oficio: item.numero_oficio,
+          decano: item.asesor,
+          oficio_referencia: item.numero_oficio_referencia || 'No disponible',  // Valor por defecto
+          codigo: item.codigo,
+          titulo: item.titulo,
+          autor: item.autor,
+          dni_autor: item.dni_autor,
+          similitud: item.porcentaje_similitud_oti,
+          titulo_grado: item.titulo_grado,
+          facultad: item.facultad,
+          url: item.url,
+          autoridad_firmante: item.asesor,
+          cargo_autoridad: item.asesor,
+        });
+  
+        try {
+          // Renderizar el documento con los datos
+          doc.render();
+        } catch (renderError) {
+          console.error("Error al renderizar el documento:", renderError);
+          return;
+        }
+  
+        // Exportar el archivo modificado
+        const output = doc.getZip().generate({
+          type: "blob",
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+  
+        // Descargar el archivo generado
+        saveAs(output, `OFICIO N° ${item.numero_oficio}-2025-JEF-OTI-RI-UNCP.docx`);
+      })
+      .catch((error) => {
+        console.error("Error al cargar el archivo:", error);
+      });
   };
+  
+  
+
+  
 
   const renderInput = (key) => {
     const dropdownOptions = {
@@ -298,14 +532,15 @@ export default function InvestigacionesTable() {
       )}
 
       <table>
-        <thead>
-          <tr>
-            {Object.keys(initialFormState).map((key) => (
-              <th key={key}>{key}</th>
-            ))}
-            <th>Acciones</th>
-          </tr>
-        </thead>
+      <thead>
+        <tr>
+          {Object.keys(initialFormState).map((key) => (
+            <th key={key}>{headers[key]}</th>
+          ))}
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
         <tbody>
           {Array.isArray(data) &&
             data.map((item) => (
