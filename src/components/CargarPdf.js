@@ -1,1 +1,1 @@
-export default function InvestigacionesTable() {}
+export default function CargarpdfTable() {}
