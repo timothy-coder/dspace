@@ -35,7 +35,7 @@ const Dashboard = () => {
       <div
         style={{
           width: "250px",
-          marginTop: "-20px",
+          marginTop: "-8px",
           marginLeft: "-8px",
           backgroundColor: "#2c3e50",
           color: "white",
