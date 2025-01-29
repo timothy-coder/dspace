@@ -4,7 +4,7 @@ import OrcidTable from "../components/OrcidTable";
 import OcdeTable from '../components/OcdeTable';
 import ExcelUpload from './ExcelUpload';
 import InvestigacionesTable from './InvestigacionesTable';
-import PdfUpload from './CargarPdf';
+import DecanosTable from './DecanosTable';
 const Dashboard = () => {
   const router = useRouter();
 
@@ -24,8 +24,8 @@ const Dashboard = () => {
         return <OcdeTable />;
       case "/cargar-excel":
         return <ExcelUpload />;
-        case "/cargarpdf":
-        return <PdfUpload />;
+        case "/decanos":
+        return <DecanosTable />;
       default:
         return <div>Página no encontrada</div>; // Contenido para rutas desconocidas
     }
@@ -74,8 +74,8 @@ const Dashboard = () => {
               </Link>
             </li>
             <li style={{ marginBottom: "20px" }}>
-              <Link href="/cargarpdf" style={{ color: "white", textDecoration: "none" }}>
-                Carga de Modelo PDF
+              <Link href="/decanos" style={{ color: "white", textDecoration: "none" }}>
+                Decanos
               </Link>
             </li>
           </ul>

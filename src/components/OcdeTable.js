@@ -23,53 +23,53 @@ export default function OcdeTable() {
 
   // Manejar la carga del archivo Excel
   const handleFileUpload = async (e) => {
-      const file = e.target.files[0];
-      if (!file) {
-        alert("Por favor, selecciona un archivo");
-        return;
-      }
-    
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const binaryString = e.target.result;
-          const workbook = XLSX.read(binaryString, { type: "binary" });
-          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-            header: ["facultad", "ocde", "codigoprograma"], // Define los nombres de las columnas
-            range: 1, // Comienza desde la segunda fila (A2)
-          });
-    
-          console.log("Datos extraídos del Excel:", jsonData);
-    
-          if (jsonData.length === 0) {
-            alert("El archivo Excel no contiene datos válidos");
-            return;
-          }
-    
-          const res = await fetch("/api/ocde/upload", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ data: jsonData }),
-          });
-    
-          if (!res.ok) {
-            throw new Error("Error al cargar los datos en el backend");
-          }
-    
-          fetchData(); // Recargar los datos en la tabla
-          alert("Carga exitosa!");
-        } catch (error) {
-          console.error("Error al procesar el archivo Excel:", error);
-          alert("Error al cargar los datos");
+    const file = e.target.files[0];
+    if (!file) {
+      alert("Por favor, selecciona un archivo");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const binaryString = e.target.result;
+        const workbook = XLSX.read(binaryString, { type: "binary" });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+          header: ["facultad", "ocde", "codigoprograma"], // Define los nombres de las columnas
+          range: 1, // Comienza desde la segunda fila (A2)
+        });
+
+        console.log("Datos extraídos del Excel:", jsonData);
+
+        if (jsonData.length === 0) {
+          alert("El archivo Excel no contiene datos válidos");
+          return;
         }
-      };
-    
-      reader.readAsBinaryString(file);
+
+        const res = await fetch("/api/ocde/upload", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: jsonData }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Error al cargar los datos en el backend");
+        }
+
+        fetchData(); // Recargar los datos en la tabla
+        alert("Carga exitosa!");
+      } catch (error) {
+        console.error("Error al procesar el archivo Excel:", error);
+        alert("Error al cargar los datos");
+      }
     };
-  
+
+    reader.readAsBinaryString(file);
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -116,47 +116,54 @@ export default function OcdeTable() {
   };
 
   return (
-    <div style={{
-      flex: 1,
-      marginTop: "-60px",
-      overflowY: "auto",
-      backgroundColor: "#ecf0f1",
-      marginLeft: "260px",
-      height: "100%",
-    }}  >
+    <div
+      style={{
+        flex: 1,
+        marginTop: "-60px",
+        overflowY: "auto",
+        backgroundColor: "#ecf0f1",
+        marginLeft: "260px",
+        height: "100%",
+      }}
+    >
       <h1>OCDE Management</h1>
-      
+
       {/* Botón para cargar el archivo Excel */}
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      <button onClick={() => setFormVisible(true)}>Agregar</button>
+      <button class="agregar" onClick={() => setFormVisible(true)}>Agregar</button>
 
+      {/* Modal de Agregar */}
       {formVisible && (
-        <form onSubmit={handleFormSubmit}>
-          <input
-            type="text"
-            placeholder="FACULTAD"
-            value={formData.facultad}
-            onChange={(e) => setFormData({ ...formData, facultad: e.target.value })}
-            
-            required
-          />
-          <input
-            type="text"
-            placeholder="Ocde"
-            value={formData.ocde}
-            onChange={(e) => setFormData({ ...formData, ocde: e.target.value })}
-            required
-          />
-          <input
-            type="text"
-            placeholder="CODIGO PROGRAMA"
-            value={formData.codigoprograma}
-            onChange={(e) => setFormData({ ...formData, codigoprograma: e.target.value })}
-            required
-          />
-          <button type="submit">{isEditing ? "Actualizar" : "Agregar"}</button>
-          <button type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
-        </form>
+        <div style={styles.modal}>
+          <div style={styles.modalContent}>
+            <h2>{isEditing ? "Editar" : "Agregar"} OCDE</h2>
+            <form onSubmit={handleFormSubmit}>
+              <input
+                type="text"
+                placeholder="FACULTAD"
+                value={formData.facultad}
+                onChange={(e) => setFormData({ ...formData, facultad: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Ocde"
+                value={formData.ocde}
+                onChange={(e) => setFormData({ ...formData, ocde: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="CODIGO PROGRAMA"
+                value={formData.codigoprograma}
+                onChange={(e) => setFormData({ ...formData, codigoprograma: e.target.value })}
+                required
+              />
+              <button class="agregar" type="submit">{isEditing ? "Actualizar" : "Agregar"}</button>
+              <button class="eliminar" type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
+            </form>
+          </div>
+        </div>
       )}
 
       <table>
@@ -176,8 +183,8 @@ export default function OcdeTable() {
                 <td>{item.ocde}</td>
                 <td>{item.codigoprograma}</td>
                 <td>
-                  <button onClick={() => handleEdit(item)}>Editar</button>
-                  <button onClick={() => handleDelete(item.facultad)}>Eliminar</button>
+                  <button class="editar" onClick={() => handleEdit(item)}>Editar</button>
+                  <button class="eliminar" onClick={() => handleDelete(item.facultad)}>Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -186,3 +193,30 @@ export default function OcdeTable() {
     </div>
   );
 }
+
+const styles = {
+  modal: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "8px",
+    width: "400px",
+    textAlign: "center",
+  },
+  input: {
+    width: "100%",
+    padding: "8px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+  },
+};

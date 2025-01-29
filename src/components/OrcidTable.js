@@ -28,7 +28,7 @@ export default function OrcidTable() {
       alert("Por favor, selecciona un archivo");
       return;
     }
-  
+
     const reader = new FileReader();
     reader.onload = async (e) => {
       try {
@@ -39,14 +39,14 @@ export default function OrcidTable() {
           header: ["dni", "nombreapellido", "orcid"], // Define los nombres de las columnas
           range: 1, // Comienza desde la segunda fila (A2)
         });
-  
+
         console.log("Datos extraídos del Excel:", jsonData);
-  
+
         if (jsonData.length === 0) {
           alert("El archivo Excel no contiene datos válidos");
           return;
         }
-  
+
         const res = await fetch("/api/orcid/upload", {
           method: "POST",
           headers: {
@@ -54,11 +54,11 @@ export default function OrcidTable() {
           },
           body: JSON.stringify({ data: jsonData }),
         });
-  
+
         if (!res.ok) {
           throw new Error("Error al cargar los datos en el backend");
         }
-  
+
         fetchData(); // Recargar los datos en la tabla
         alert("Carga exitosa!");
       } catch (error) {
@@ -66,11 +66,10 @@ export default function OrcidTable() {
         alert("Error al cargar los datos");
       }
     };
-  
+
     reader.readAsBinaryString(file);
   };
-  
-  
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -117,47 +116,45 @@ export default function OrcidTable() {
   };
 
   return (
-    <div style={{
-      flex: 1,
-      marginTop: "-60px",
-      overflowY: "auto",
-      backgroundColor: "#ecf0f1",
-      marginLeft: "260px",
-      height: "100%",
-    }} >
+    <div style={{ flex: 1, marginTop: "-60px", overflowY: "auto", backgroundColor: "#ecf0f1", marginLeft: "260px", height: "100%" }}>
       <h1>ORCID Management</h1>
-      
+
       {/* Botón para cargar el archivo Excel */}
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      <button onClick={() => setFormVisible(true)}>Agregar</button>
+      <button class="agregar" onClick={() => setFormVisible(true)}>Agregar</button>
 
+      {/* Modal para agregar/editar */}
       {formVisible && (
-        <form onSubmit={handleFormSubmit}>
-          <input
-            type="text"
-            placeholder="DNI"
-            value={formData.dni}
-            onChange={(e) => setFormData({ ...formData, dni: e.target.value })}
-            
-            required
-          />
-          <input
-            type="text"
-            placeholder="Nombre y Apellido"
-            value={formData.nombreapellido}
-            onChange={(e) => setFormData({ ...formData, nombreapellido: e.target.value })}
-            required
-          />
-          <input
-            type="text"
-            placeholder="ORCID"
-            value={formData.orcid}
-            onChange={(e) => setFormData({ ...formData, orcid: e.target.value })}
-            required
-          />
-          <button type="submit">{isEditing ? "Actualizar" : "Agregar"}</button>
-          <button type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
-        </form>
+        <div style={modalStyle}>
+          <div style={modalContentStyle}>
+            <h2>{isEditing ? "Editar Registro" : "Agregar Registro"}</h2>
+            <form onSubmit={handleFormSubmit}>
+              <input
+                type="text"
+                placeholder="DNI"
+                value={formData.dni}
+                onChange={(e) => setFormData({ ...formData, dni: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Nombre y Apellido"
+                value={formData.nombreapellido}
+                onChange={(e) => setFormData({ ...formData, nombreapellido: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="ORCID"
+                value={formData.orcid}
+                onChange={(e) => setFormData({ ...formData, orcid: e.target.value })}
+                required
+              />
+              <button class="agregar" type="submit">{isEditing ? "Actualizar" : "Agregar"}</button>
+              <button class="eliminar" type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
+            </form>
+          </div>
+        </div>
       )}
 
       <table>
@@ -177,8 +174,8 @@ export default function OrcidTable() {
                 <td>{item.nombreapellido}</td>
                 <td>{item.orcid}</td>
                 <td>
-                  <button onClick={() => handleEdit(item)}>Editar</button>
-                  <button onClick={() => handleDelete(item.dni)}>Eliminar</button>
+                  <button onClick={() => handleEdit(item)} class="editar">Editar</button>
+                  <button onClick={() => handleDelete(item.dni)} class="eliminar">Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -187,3 +184,23 @@ export default function OrcidTable() {
     </div>
   );
 }
+
+const modalStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+const modalContentStyle = {
+  backgroundColor: "white",
+  padding: "20px",
+  borderRadius: "8px",
+  width: "400px",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+};

@@ -33,3 +33,23 @@ li a {
   text-decoration: none; /* Eliminar subrayado del enlace */
   display: block; /* Hace que el enlace ocupe todo el contenedor del <li> */
 }
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px;
+  max-width: 100%;
+}

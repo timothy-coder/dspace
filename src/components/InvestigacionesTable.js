@@ -1,24 +1,10 @@
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx"; // Librería para leer Excel
-
-/*import {
-  AlignmentType,
-  Document,
-  Packer,
-  Paragraph,
-  Table,
-  TableCell,
-  TableRow,
-  TextRun,
-  WidthType,
-  ImageRun,
-} from "docx";
-import { saveAs } from "file-saver";*/
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import JSZipUtils from "jszip-utils";
-
+import "./styles.css"; // Importa tu archivo CSS si lo usas
 
 export default function InvestigacionesTable() {
   const headers = {
@@ -206,186 +192,6 @@ export default function InvestigacionesTable() {
     }
   };
   
-  
-  /*const handlePrint = async (item) => {
-    // Cargar las imágenes como blobs
-    const escudoBlob = await fetch("URL_DE_LA_IMAGEN_ESCUDO").then((res) =>
-      res.blob()
-    );
-    const firmaBlob = await fetch("URL_DE_LA_IMAGEN_FIRMA").then((res) =>
-      res.blob()
-    );
-  
-    // Crear el documento Word con imágenes y diseño
-    const doc = new Document({
-      sections: [
-        {
-          children: [
-            // Encabezado con imagen y texto
-            new Paragraph({
-              children: [
-                new ImageRun({
-                  data: escudoBlob,
-                  transformation: { width: 100, height: 100 },
-                }),
-                new TextRun({
-                  text: "UNIVERSIDAD NACIONAL DEL CENTRO DEL PERÚ",
-                  bold: true,
-                  size: 28,
-                  allCaps: true,
-                }),
-                new TextRun({
-                  text: "OFICINA DE TECNOLOGÍAS DE LA INFORMACIÓN",
-                  bold: true,
-                  size: 28,
-                  allCaps: true,
-                }),
-              ],
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({
-              text: "Año de la recuperación y consolidación de la economía peruana",
-              alignment: AlignmentType.CENTER,
-              italics: true,
-            }),
-  
-            // Fecha
-            new Paragraph({
-              text: `Huancayo, ${item.fecha}`,
-              alignment: AlignmentType.RIGHT,
-            }),
-  
-            // Título del oficio
-            new Paragraph({
-              text: `OFICIO N° ${item.numero_oficio}`,
-              bold: true,
-              size: 24,
-              alignment: AlignmentType.CENTER,
-            }),
-  
-            // Destinatario
-            new Paragraph({
-              text: `Ph. D. Dr.\n${item.decano}\nDECANO DE LA FACULTAD DE INGENIERÍA CIVIL\nPRESENTE.`,
-            }),
-  
-            // Asunto
-            new Paragraph({
-              text: "\nASUNTO: REMITO URL GENERADO EN EL REPOSITORIO INSTITUCIONAL PARA TRÁMITE DE LA OBTENCIÓN DEL DIPLOMA",
-              bold: true,
-            }),
-            new Paragraph(`REFERENCIA: OFICIO N° ${item.oficio_referencia}`),
-  
-            // Cuerpo del oficio
-            new Paragraph({
-              text: `Es grato dirigirme a usted para saludarlo cordialmente y a la vez informarle que se ha generado la URL de acuerdo a lo solicitado con el documento de referencia para proceder con el trámite correspondiente de la obtención del diploma, según el siguiente detalle:`,
-            }),
-  
-            // Tabla de contenido
-            new Table({
-              rows: [
-                // Fila de encabezados
-                new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph("N°")],
-                      width: { size: 5, type: WidthType.PERCENTAGE },
-                    }),
-                    new TableCell({
-                      children: [new Paragraph("CÓDIGO")],
-                      width: { size: 15, type: WidthType.PERCENTAGE },
-                    }),
-                    new TableCell({
-                      children: [new Paragraph("TÍTULO DE LA TESIS")],
-                      width: { size: 30, type: WidthType.PERCENTAGE },
-                    }),
-                    new TableCell({
-                      children: [new Paragraph("AUTOR")],
-                      width: { size: 20, type: WidthType.PERCENTAGE },
-                    }),
-                    new TableCell({
-                      children: [new Paragraph("SIMILITUD")],
-                      width: { size: 10, type: WidthType.PERCENTAGE },
-                    }),
-                    new TableCell({
-                      children: [new Paragraph("TÍTULO/GRADO")],
-                      width: { size: 10, type: WidthType.PERCENTAGE },
-                    }),
-                    new TableCell({
-                      children: [new Paragraph("FACULTAD")],
-                      width: { size: 15, type: WidthType.PERCENTAGE },
-                    }),
-                    new TableCell({
-                      children: [new Paragraph("URL")],
-                      width: { size: 20, type: WidthType.PERCENTAGE },
-                    }),
-                  ],
-                }),
-                // Fila de datos
-                new TableRow({
-                  children: [
-                    new TableCell({
-                      children: [new Paragraph("1")],
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(item.codigo)],
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(item.titulo)],
-                    }),
-                    new TableCell({
-                      children: [
-                        new Paragraph(`${item.autor} (DNI: ${item.dni_autor})`),
-                      ],
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(`${item.similitud}%`)],
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(item.titulo_grado)],
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(item.facultad)],
-                    }),
-                    new TableCell({
-                      children: [new Paragraph(item.url)],
-                    }),
-                  ],
-                }),
-              ],
-            }),
-  
-            // Pie del oficio
-            new Paragraph({
-              text: `\nSin otro en particular, se aprovecha la ocasión para expresarle las muestras de mi distinguida consideración y agradecimiento por la atención prestada.\n\nAtentamente,`,
-            }),
-            // Firma con imagen
-            new Paragraph({
-              children: [
-                new ImageRun({
-                  data: firmaBlob,
-                  transformation: { width: 200, height: 50 },
-                }),
-              ],
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({
-              text: `${item.autoridad_firmante}\n${item.cargo_autoridad}`,
-              alignment: AlignmentType.CENTER,
-            }),
-          ],
-        },
-      ],
-    });
-  
-    // Generar archivo y descargar
-    Packer.toBlob(doc).then((blob) => {
-      saveAs(blob, `OFICIO N° ${item.numero_oficio}-2025-JEF-OTI-RI-UNCP.docx`);
-    });
-  };*/
-  const JSZip = require("jszip");
-  const PizZip = require("pizzip");
-  const Docxtemplater = require("docxtemplater");
-  
   const handlePrint = (item) => {
     // Verifica si falta el campo 'oficio_referencia'
     if (!item.oficio_referencia) {
@@ -451,10 +257,6 @@ export default function InvestigacionesTable() {
       });
   };
   
-  
-
-  
-
   const renderInput = (key) => {
     const dropdownOptions = {
       tipo: ["Tesis", "Proyecto de investigación", "Trabajo de suficiencia profesional"],
@@ -463,42 +265,24 @@ export default function InvestigacionesTable() {
       titulo_si_no: ["Si", "No"],
       tipo_tesis_si_no: ["Si", "No"],
       porcentaje_reporte_tesis_si_no: ["Si", "No"],
-      estado: ["Por enviar", "Observado", "Enviado"],
+      estado: ["Vigente", "Finalizado", "Pendiente"],
     };
+    const isDropdown = dropdownOptions[key];
 
-    if (dropdownOptions[key]) {
-      return (
-        <select
-          key={key}
-          value={formData[key]}
-          onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-        >
-          <option value="">Seleccionar</option>
-          {dropdownOptions[key].map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      );
-    }
-
-    if (key === "fecha") {
-      return (
-        <input
-          key={key}
-          type="date" // Tipo de entrada para el calendario
-          value={formData[key]}
-          onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-        />
-      );
-    }
-
-    return (
+    return isDropdown ? (
+      <select
+        value={formData[key]}
+        onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+      >
+        {isDropdown.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    ) : (
       <input
-        key={key}
         type="text"
-        placeholder={key}
         value={formData[key]}
         onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
       />
@@ -506,55 +290,45 @@ export default function InvestigacionesTable() {
   };
 
   return (
-    <div
-      style={{
-        flex: 1,
-        marginTop: "-60px",
-        overflowY: "auto",
-        backgroundColor: "#ecf0f1",
-        marginLeft: "260px",
-        height: "100%",
-      }}
-    >
-      <h1>Gestión de Investigaciones</h1>
-
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      <button onClick={() => setFormVisible(true)}>Agregar</button>
-
+    <div style={{marginLeft:"260px"}}>
+      <button class="agregar" onClick={() => setFormVisible(true)}>Agregar nueva investigación</button>
+      <input type="file" onChange={handleFileUpload} />
       {formVisible && (
-        <form onSubmit={handleFormSubmit}>
-          {Object.keys(initialFormState).map((key) => renderInput(key))}
-          <button type="submit">{isEditing ? "Actualizar" : "Agregar"}</button>
-          <button type="button" onClick={() => setFormVisible(false)}>
-            Cancelar
-          </button>
-        </form>
-      )}
-
-      <table>
-      <thead>
-        <tr>
-          {Object.keys(initialFormState).map((key) => (
-            <th key={key}>{headers[key]}</th>
-          ))}
-          <th>Acciones</th>
-        </tr>
-      </thead>
-
-        <tbody>
-          {Array.isArray(data) &&
-            data.map((item) => (
-              <tr key={item.codigo}>
-                {Object.keys(initialFormState).map((key) => (
-                  <td key={key}>{item[key]}</td>
-                ))}
-                <td>
-                  <button onClick={() => handleEdit(item)}>Editar</button>
-                  <button onClick={() => handleDelete(item.codigo)}>Eliminar</button>
-                  <button onClick={() => handlePrint(item)}>Imprimir</button>
-                </td>
-              </tr>
+        <div className="modal">
+          <form onSubmit={handleFormSubmit}>
+            {Object.keys(headers).map((key) => (
+              <div key={key}>
+                <label>{headers[key]}</label>
+                {renderInput(key)}
+              </div>
             ))}
+            <button class="agregar" type="submit">{isEditing ? "Actualizar" : "Guardar"}</button>
+            <button class="eliminar" type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
+          </form>
+        </div>
+      )}
+      <table>
+        <thead>
+          <tr>
+            {Object.keys(headers).map((key) => (
+              <th key={key}>{headers[key]}</th>
+            ))}
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, index) => (
+            <tr key={index}>
+              {Object.keys(headers).map((key) => (
+                <td key={key}>{item[key]}</td>
+              ))}
+              <td>
+                <button class="editar" onClick={() => handleEdit(item)}>Editar</button>
+                <button class="eliminar" onClick={() => handleDelete(item.codigo)}>Eliminar</button>
+                <button class="imprimir" onClick={() => handlePrint(item)}>Imprimir</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
