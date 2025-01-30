@@ -4,7 +4,7 @@ import * as XLSX from "xlsx"; // Librería para leer Excel
 export default function DecanosTable() {
   const [data, setData] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
-  const [formData, setFormData] = useState({ facultad: "", ocde: "", codigoprograma: "" });
+  const [formData, setFormData] = useState({ facultad: "", grado: "", nombreapellidodecano: "" });
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ export default function DecanosTable() {
   }, []);
 
   const fetchData = async () => {
-    const response = await fetch("/api/ocde");
+    const response = await fetch("/api/decanos");
     const result = await response.json();
     if (Array.isArray(result)) {
       setData(result);
@@ -36,7 +36,7 @@ export default function DecanosTable() {
         const workbook = XLSX.read(binaryString, { type: "binary" });
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: ["facultad", "ocde", "codigoprograma"], // Define los nombres de las columnas
+          header: ["facultad, grado, nombreapellidodecano,denominacion,modelooficio,estado"], // Define los nombres de las columnas
           range: 1, // Comienza desde la segunda fila (A2)
         });
 
@@ -47,7 +47,7 @@ export default function DecanosTable() {
           return;
         }
 
-        const res = await fetch("/api/ocde/upload", {
+        const res = await fetch("/api/decanos/upload", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -74,13 +74,13 @@ export default function DecanosTable() {
     e.preventDefault();
     try {
       if (isEditing) {
-        await fetch("/api/ocde", {
+        await fetch("/api/decanos", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
       } else {
-        await fetch("/api/ocde", {
+        await fetch("/api/decanos", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -89,7 +89,7 @@ export default function DecanosTable() {
 
       fetchData();
       setFormVisible(false);
-      setFormData({ facultad: "", ocde: "", codigoprograma: "" });
+      setFormData({ facultad: "", grado: "", nombreapellidodecano: "" ,denominacion:"",modelooficio:"",estado:""});
       setIsEditing(false);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -104,7 +104,7 @@ export default function DecanosTable() {
 
   const handleDelete = async (facultad) => {
     try {
-      await fetch("/api/ocde", {
+      await fetch("/api/decanos", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ facultad }),
@@ -136,7 +136,7 @@ export default function DecanosTable() {
       {formVisible && (
         <div style={styles.modal}>
           <div style={styles.modalContent}>
-            <h2>{isEditing ? "Editar" : "Agregar"} OCDE</h2>
+            <h2>{isEditing ? "Editar" : "Agregar"} grado</h2>
             <form onSubmit={handleFormSubmit}>
               <input
                 type="text"
@@ -147,16 +147,37 @@ export default function DecanosTable() {
               />
               <input
                 type="text"
-                placeholder="Ocde"
-                value={formData.ocde}
-                onChange={(e) => setFormData({ ...formData, ocde: e.target.value })}
+                placeholder="grado"
+                value={formData.grado}
+                onChange={(e) => setFormData({ ...formData, grado: e.target.value })}
                 required
               />
               <input
                 type="text"
-                placeholder="CODIGO PROGRAMA"
-                value={formData.codigoprograma}
-                onChange={(e) => setFormData({ ...formData, codigoprograma: e.target.value })}
+                placeholder="NOMBRE Y APELLIDO DE DECANO"
+                value={formData.nombreapellidodecano}
+                onChange={(e) => setFormData({ ...formData, nombreapellidodecano: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="DENOMINACION"
+                value={formData.denominacion}
+                onChange={(e) => setFormData({ ...formData, denominacion: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="MODELO DE OFICIO"
+                value={formData.modelooficio}
+                onChange={(e) => setFormData({ ...formData, modelooficio: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                placeholder="DECANO O DIRECTOR DE INVESTIGACION"
+                value={formData.estado}
+                onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
                 required
               />
               <button class="agregar" type="submit">{isEditing ? "Actualizar" : "Agregar"}</button>
@@ -170,8 +191,11 @@ export default function DecanosTable() {
         <thead>
           <tr>
             <th>FACULTAD</th>
-            <th>OCDE</th>
-            <th>CODIGO PROGRAMA</th>
+            <th>grado</th>
+            <th>nombreapellidodecano</th>
+            <th>denominacion</th>
+            <th>modelooficio</th>
+            <th>estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -180,8 +204,11 @@ export default function DecanosTable() {
             data.map((item) => (
               <tr key={item.facultad}>
                 <td>{item.facultad}</td>
-                <td>{item.ocde}</td>
-                <td>{item.codigoprograma}</td>
+                <td>{item.grado}</td>
+                <td>{item.nombreapellidodecano}</td>
+                <td>{item.denominacion}</td>
+                <td>{item.modelooficio}</td>
+                <td>{item.estado}</td>
                 <td>
                   <button class="editar" onClick={() => handleEdit(item)}>Editar</button>
                   <button class="eliminar" onClick={() => handleDelete(item.facultad)}>Eliminar</button>
