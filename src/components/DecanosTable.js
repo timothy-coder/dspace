@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx"; // Librería para leer Excel
-
+import "./styles.css"; // Importa tu archivo CSS si lo usas
 export default function DecanosTable() {
+  const headers = {
+    facultad: "facultad",
+    grado: "grado",
+    nombreapellidodecano: "nombreapellidodecano",
+    denominacion: "denominacion",
+    modelooficio: "modelooficio",
+    estado: "estado"
+  };
   const [data, setData] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
-  const [formData, setFormData] = useState({ facultad: "", grado: "", nombreapellidodecano: "" });
+  const [formData, setFormData] = useState({ facultad: "", grado: "", nombreapellidodecano: "", denominacion: "", modelooficio: "", estado: ""});
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -36,7 +44,7 @@ export default function DecanosTable() {
         const workbook = XLSX.read(binaryString, { type: "binary" });
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: ["facultad, grado, nombreapellidodecano,denominacion,modelooficio,estado"], // Define los nombres de las columnas
+          header: ["Facultad", "Grado", "Autoridad","Denominación","Modelo","ESTADO"],
           range: 1, // Comienza desde la segunda fila (A2)
         });
 
@@ -189,13 +197,10 @@ export default function DecanosTable() {
 
       <table>
         <thead>
-          <tr>
-            <th>FACULTAD</th>
-            <th>grado</th>
-            <th>nombreapellidodecano</th>
-            <th>denominacion</th>
-            <th>modelooficio</th>
-            <th>estado</th>
+        <tr>
+            {Object.keys(headers).map((key) => (
+              <th key={key}>{headers[key]}</th>
+            ))}
             <th>Acciones</th>
           </tr>
         </thead>

@@ -209,12 +209,12 @@ export default function InvestigacionesTable() {
     setFormVisible(true);
   };
 
-  const handleDelete = async (codigo) => {
+  const handleDelete = async (id) => {
     try {
       await fetch("/api/investigaciones", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ codigo }),
+        body: JSON.stringify({ id }),
       });
       fetchData();
     } catch (error) {
@@ -354,7 +354,7 @@ export default function InvestigacionesTable() {
               ))}
               <td>
                 <button class="editar" onClick={() => handleEdit(item)}>Editar</button>
-                <button class="eliminar" onClick={() => handleDelete(item.codigo)}>Eliminar</button>
+                <button class="eliminar" onClick={() => handleDelete(item.id)}>Eliminar</button>
                 <button class="imprimir" onClick={() => handlePrint(item)}>Imprimir</button>
               </td>
             </tr>

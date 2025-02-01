@@ -125,8 +125,10 @@ export default function OrcidTable() {
 
       {/* Modal para agregar/editar */}
       {formVisible && (
-        <div style={modalStyle}>
-          <div style={modalContentStyle}>
+        
+        <div style={styles.modal}>
+          <div style={styles.modalContent}>
+          <button style={styles.closeButton} onClick={() => setFormVisible(false)}></button>
             <h2>{isEditing ? "Editar Registro" : "Agregar Registro"}</h2>
             <form onSubmit={handleFormSubmit}>
               <input
@@ -185,22 +187,36 @@ export default function OrcidTable() {
   );
 }
 
-const modalStyle = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-};
-
-const modalContentStyle = {
-  backgroundColor: "white",
-  padding: "20px",
-  borderRadius: "8px",
-  width: "400px",
-  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-};
+const styles={
+  modal: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "8px",
+    width: "400px",
+    textAlign: "center",
+    position: "relative", // Para que el botón "X" se posicione correctamente
+  },
+  closeButton: {
+    position: "absolute",
+    right: "5px",
+    background: "red",
+    color: "white",
+    width: "20px",
+    height: "30px",
+    cursor: "pointer",
+    fontSize: "16px",
+    lineHeight: "25px",
+    textAlign: "center",
+  },
+}
