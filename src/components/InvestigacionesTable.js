@@ -113,26 +113,10 @@ export default function InvestigacionesTable() {
   const [formVisible, setFormVisible] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
   const [isEditing, setIsEditing] = useState(false);
-  const [asesores, setAsesores] = useState([]);
-  const [facultades, setFacultades] = useState([]);
-  
+
   useEffect(() => {
     fetchData();
-    fetchAsesores();
-    fetchFacultades();
   }, []);
-  
-  const fetchAsesores = async () => {
-    const response = await fetch("/api/asesores");
-    const result = await response.json();
-    setAsesores(result);
-  };
-  
-  const fetchFacultades = async () => {
-    const response = await fetch("/api/facultades");
-    const result = await response.json();
-    setFacultades(result);
-  };
 
   const fetchData = async () => {
     const response = await fetch("/api/investigaciones");
@@ -143,29 +127,7 @@ export default function InvestigacionesTable() {
       setData([]);
     }
   };
-  const handleAsesorChange = (dni) => {
-    const asesorSeleccionado = asesores.find(asesor => asesor.dni === dni);
-    if (asesorSeleccionado) {
-      setFormData({
-        ...formData,
-        dni_asesor: asesorSeleccionado.dni,
-        asesor: asesorSeleccionado.nombreapellido,
-        orcid: asesorSeleccionado.orcid,
-      });
-    }
-  };
-  
-  const handleFacultadChange = (facultad) => {
-    const facultadSeleccionada = facultades.find(f => f.facultad === facultad);
-    if (facultadSeleccionada) {
-      setFormData({
-        ...formData,
-        facultad: facultadSeleccionada.facultad,
-        ocde: facultadSeleccionada.ocde,
-        codigo_programa: facultadSeleccionada.codigoprograma,
-      });
-    }
-  };
+
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
 
@@ -335,41 +297,8 @@ export default function InvestigacionesTable() {
       porcentaje_reporte_tesis_si_no: ["Si", "No"],
       estado: ["Observado", "Por enviar", "Enviado"],
     };
-  
-    if (key === "dni_asesor") {
-      return (
-        <select
-          value={formData[key]}
-          onChange={(e) => handleAsesorChange(e.target.value)}
-        >
-          <option value="">Seleccione un DNI</option>
-          {asesores.map((asesor) => (
-            <option key={asesor.dni} value={asesor.dni}>
-              {asesor.dni}
-            </option>
-          ))}
-        </select>
-      );
-    }
-  
-    if (key === "facultad") {
-      return (
-        <select
-          value={formData[key]}
-          onChange={(e) => handleFacultadChange(e.target.value)}
-        >
-          <option value="">Seleccione una facultad</option>
-          {facultades.map((facultad) => (
-            <option key={facultad.facultad} value={facultad.facultad}>
-              {facultad.facultad}
-            </option>
-          ))}
-        </select>
-      );
-    }
-  
     const isDropdown = dropdownOptions[key];
-  
+
     return isDropdown ? (
       <select
         value={formData[key]}
@@ -389,25 +318,25 @@ export default function InvestigacionesTable() {
       />
     );
   };
+
   return (
     <div style={{marginLeft:"260px"}}>
       <button class="agregar" onClick={() => setFormVisible(true)}>Agregar nueva investigación</button>
       <input type="file" onChange={handleFileUpload} />
       {formVisible && (
-  <div className="modal">
-    <button className="close-button" onClick={() => setFormVisible(false)}>X</button>
-    <form onSubmit={handleFormSubmit}>
-      {Object.keys(headersmodal).map((key) => (
-        <div key={key}>
-          <label>{headersmodal[key]}</label>
-          {renderInput(key)}
+        <div className="modal">
+          <form onSubmit={handleFormSubmit}>
+            {Object.keys(headersmodal).map((key) => (
+              <div key={key}>
+                <label>{headersmodal[key]}</label>
+                {renderInput(key)}
+              </div>
+            ))}
+            <button class="agregar" type="submit">{isEditing ? "Actualizar" : "Guardar"}</button>
+            <button class="eliminar" type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
+          </form>
         </div>
-      ))}
-      <button className="agregar" type="submit">{isEditing ? "Actualizar" : "Guardar"}</button>
-      <button className="eliminar" type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
-    </form>
-  </div>
-)}
+      )}
       <table>
         <thead>
           <tr>
