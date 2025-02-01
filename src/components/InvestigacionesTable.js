@@ -42,7 +42,37 @@ export default function InvestigacionesTable() {
     palabrasclave: "Palabras Clave",
     estado: "Estado",
   };
-  
+  const headersmodal = {
+    titulo: "Título",
+    autor: "Autor",
+    dni_autor: "DNI del Autor",
+    autor2: "Coautor",
+    dni_autor2: "DNI del Coautor",
+    asesor: "Asesor",
+    dni_asesor: "DNI del Asesor",
+    fecha: "Fecha",
+    titulo_grado: "Título de Grado",
+    denominacion: "Denominación",
+    facultad: "Facultad",
+    tipo: "Tipo de Investigación",
+    porcentaje_similitud_oti: "Similitud OTI",
+    porcentaje_similitud_asesor: "Similitud Asesor",
+    jurado_1: "Jurado 1",
+    jurado_2: "Jurado 2",
+    jurado_3: "Jurado 3",
+    autoridad_firmante: "Autoridad Firmante",
+    numero_oficio_referencia: "N° de Oficio de Referencia",
+    autorizacion: "Autorización",
+    denominacion_si_no: "Denominación",
+    titulo_si_no: "Título",
+    tipo_tesis_si_no: "Tipo de Tesis",
+    porcentaje_reporte_tesis_si_no: "Reporte Tesis",
+    observaciones: "Observaciones",
+    url: "URL",
+    numero_oficio: "N° de Oficio",
+    palabrasclave: "Palabras Clave",
+    estado: "Estado",
+  };
   const initialFormState = {
     codigo: "",
     titulo: "",
@@ -83,10 +113,26 @@ export default function InvestigacionesTable() {
   const [formVisible, setFormVisible] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
   const [isEditing, setIsEditing] = useState(false);
-
+  const [asesores, setAsesores] = useState([]);
+  const [facultades, setFacultades] = useState([]);
+  
   useEffect(() => {
     fetchData();
+    fetchAsesores();
+    fetchFacultades();
   }, []);
+  
+  const fetchAsesores = async () => {
+    const response = await fetch("/api/asesores");
+    const result = await response.json();
+    setAsesores(result);
+  };
+  
+  const fetchFacultades = async () => {
+    const response = await fetch("/api/facultades");
+    const result = await response.json();
+    setFacultades(result);
+  };
 
   const fetchData = async () => {
     const response = await fetch("/api/investigaciones");
@@ -97,7 +143,29 @@ export default function InvestigacionesTable() {
       setData([]);
     }
   };
-
+  const handleAsesorChange = (dni) => {
+    const asesorSeleccionado = asesores.find(asesor => asesor.dni === dni);
+    if (asesorSeleccionado) {
+      setFormData({
+        ...formData,
+        dni_asesor: asesorSeleccionado.dni,
+        asesor: asesorSeleccionado.nombreapellido,
+        orcid: asesorSeleccionado.orcid,
+      });
+    }
+  };
+  
+  const handleFacultadChange = (facultad) => {
+    const facultadSeleccionada = facultades.find(f => f.facultad === facultad);
+    if (facultadSeleccionada) {
+      setFormData({
+        ...formData,
+        facultad: facultadSeleccionada.facultad,
+        ocde: facultadSeleccionada.ocde,
+        codigo_programa: facultadSeleccionada.codigoprograma,
+      });
+    }
+  };
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
 
@@ -265,10 +333,43 @@ export default function InvestigacionesTable() {
       titulo_si_no: ["Si", "No"],
       tipo_tesis_si_no: ["Si", "No"],
       porcentaje_reporte_tesis_si_no: ["Si", "No"],
-      estado: ["Vigente", "Finalizado", "Pendiente"],
+      estado: ["Observado", "Por enviar", "Enviado"],
     };
+  
+    if (key === "dni_asesor") {
+      return (
+        <select
+          value={formData[key]}
+          onChange={(e) => handleAsesorChange(e.target.value)}
+        >
+          <option value="">Seleccione un DNI</option>
+          {asesores.map((asesor) => (
+            <option key={asesor.dni} value={asesor.dni}>
+              {asesor.dni}
+            </option>
+          ))}
+        </select>
+      );
+    }
+  
+    if (key === "facultad") {
+      return (
+        <select
+          value={formData[key]}
+          onChange={(e) => handleFacultadChange(e.target.value)}
+        >
+          <option value="">Seleccione una facultad</option>
+          {facultades.map((facultad) => (
+            <option key={facultad.facultad} value={facultad.facultad}>
+              {facultad.facultad}
+            </option>
+          ))}
+        </select>
+      );
+    }
+  
     const isDropdown = dropdownOptions[key];
-
+  
     return isDropdown ? (
       <select
         value={formData[key]}
@@ -288,25 +389,25 @@ export default function InvestigacionesTable() {
       />
     );
   };
-
   return (
     <div style={{marginLeft:"260px"}}>
       <button class="agregar" onClick={() => setFormVisible(true)}>Agregar nueva investigación</button>
       <input type="file" onChange={handleFileUpload} />
       {formVisible && (
-        <div className="modal">
-          <form onSubmit={handleFormSubmit}>
-            {Object.keys(headers).map((key) => (
-              <div key={key}>
-                <label>{headers[key]}</label>
-                {renderInput(key)}
-              </div>
-            ))}
-            <button class="agregar" type="submit">{isEditing ? "Actualizar" : "Guardar"}</button>
-            <button class="eliminar" type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
-          </form>
+  <div className="modal">
+    <button className="close-button" onClick={() => setFormVisible(false)}>X</button>
+    <form onSubmit={handleFormSubmit}>
+      {Object.keys(headersmodal).map((key) => (
+        <div key={key}>
+          <label>{headersmodal[key]}</label>
+          {renderInput(key)}
         </div>
-      )}
+      ))}
+      <button className="agregar" type="submit">{isEditing ? "Actualizar" : "Guardar"}</button>
+      <button className="eliminar" type="button" onClick={() => setFormVisible(false)}>Cancelar</button>
+    </form>
+  </div>
+)}
       <table>
         <thead>
           <tr>
